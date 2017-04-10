@@ -7,51 +7,64 @@ import {
 import Swiper from 'react-native-swiper'
 
 import {map} from 'lodash';
+import {fromJS} from 'immutable';
 
+const st =  {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#9DD6EB'
+};
 
 const styles = StyleSheet.create({
-wrapper: {
- },
- slide1: {
-   flex: 1,
-   justifyContent: 'center',
-   alignItems: 'center',
-   backgroundColor: '#9DD6EB'
- },
- slide2: {
-   flex: 1,
-   justifyContent: 'center',
-   alignItems: 'center',
-   backgroundColor: '#97CAE5'
- },
- slide3: {
-   flex: 1,
-   justifyContent: 'center',
-   alignItems: 'center',
-   backgroundColor: '#92BBD9'
- },
+ slide1: st,
  text: {
-   color: '#fff',
+   color: '#000000',
    fontSize: 30,
+   fontWeight: 'bold'
+ },
+ text2: {
+   color: '#333333',
+   fontSize: 20,
    fontWeight: 'bold'
  }
 });
 
 
 export default class Leaf extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.onMomentumScrollEnd = this.onMomentumScrollEnd.bind(this);
+  }
+
+  onMomentumScrollEnd(evt, state) {
+    this.props.onViewChanged(state.index);
+  }
+
   renderRange() {
-    return map(this.props.range,(item) => {
+    return map(this.props.range,(item,i) => {
+      const style = fromJS(st).set('backgroundColor',this.props.color[i]).toJS();
       return (
-        <View key={item} style={styles.slide1}>
+        <View key={item} style={style}>
+          <Text style={styles.text2}>xxx</Text>
           <Text style={styles.text}>{item}</Text>
+          <Text style={styles.text2}>xxx</Text>
         </View>
       );
     })
   }
 
   render() {
+    console.log("--->",this.props.index)
     return (
-      <Swiper style={styles.wrapper} horizontal={false}>
+      <Swiper
+        style={styles.wrapper}
+        horizontal={false}
+        index={this.props.index}
+        onMomentumScrollEnd={this.onMomentumScrollEnd}
+      >
         {this.renderRange()}
       </Swiper>
     )

@@ -7,6 +7,7 @@ import {
 import Swiper from 'react-native-swiper'
 import {map} from 'lodash';
 
+import {plutchicOrder,plutchic} from '../constants';
 import Leaf from './Leaf'
 
 const styles = StyleSheet.create({
@@ -58,59 +59,34 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    this.plutchicOrder = [
-      "ecstacy",
-      "admiration",
-      "terror",
-      "amazement"
-      ,"grief",
-      "loathing",
-      "rage",
-      "vigilance",
-    ];
-
-    this.plutchic = {
-      ecstacy: {
-        range: ["ecstacy","joy","serenity"],
-        color: "",
-      },
-      admiration: {
-        range: ["admiration","trus","acceptance"],
-        color: "",
-      },
-      terror: {
-        range:["terror","fear","apprehension"],
-        color:"",
-      },
-      amazement: {
-        range:["amazement","surprise","distraction"],
-        color: "",
-      },
-      grief: {
-        range:["grief","sadness","pensiveness"],
-        color: "",
-      },
-      loathing: {
-        range:["loathing","disgust","boredom"],
-        color: "",
-      },
-      rage: {
-        range: ["rage","anger","annoyance"],
-        color: "",
-      },
-      vigilance: {
-        range: ["vigilance","anticipation","interest"],
-        color: "",
-      },
+    this.state = {
+      index: 2,
+      subIndex: 0,
     }
+
+    this.onMomentumScrollEnd = this.onMomentumScrollEnd.bind(this);
+    this.onViewChanged = this.onViewChanged.bind(this);
+  }
+
+  onMomentumScrollEnd(evt, state) {
+    this.setState({index:state.index});
+  }
+
+  onViewChanged(subIndex) {
+    this.setState({subIndex});
   }
 
   renderLeafs() {
-    return map(this.plutchicOrder,(name) => {
-      var leafData = this.plutchic[name];
+    return map(plutchicOrder,(name) => {
+      var leafData = plutchic[name];
       return (
         <View key={name}  style={styles.slide1}>
-          <Leaf range={leafData.range}/>
+          <Leaf
+            range={leafData.range}
+            color={leafData.color}
+            index={this.state.subIndex}
+            onViewChanged={this.onViewChanged}
+          />
         </View>
       );
     })
@@ -118,7 +94,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <Swiper style={styles.wrapper}>
+      <Swiper
+        style={styles.wrapper}
+        index={this.state.index}
+        onMomentumScrollEnd={this.onMomentumScrollEnd}
+      >
         {this.renderLeafs()}
       </Swiper>
     );
